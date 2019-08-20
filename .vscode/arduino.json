@@ -1,0 +1,7 @@
+{
+    "sketch": "main.cpp",
+    "board": "esp32:esp32:pico32",
+    "configuration": "UploadSpeed=115200,DebugLevel=error",
+    "port": "/dev/ttyUSB0",
+    "output": "build"
+}

@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/bukodi/.arduino15/packages/esp32/tools/**",
+                "/home/bukodi/.arduino15/packages/esp32/hardware/esp32/1.0.2/**",
+                "/home/bukodi/Arduino/libraries/M5StickC/src/",
+                "${workspaceFolder}/**"
+            ],
+            "forcedInclude": [],
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        },
+        {
+            "name": "DefaultCfg",
+            "includePath": [
+                "/home/bukodi/.arduino15/packages/esp32/tools/**",
+                "/home/bukodi/.arduino15/packages/esp32/hardware/esp32/1.0.2/**",
+                "/home/bukodi/Arduino/libraries/M5StickC/src/",
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}
