@@ -1,5 +1,4 @@
 #define ESP32
-#include <Arduino.h>
 #include <M5StickC.h>
 #include <cstring>
 #include "soc/timer_group_struct.h"
@@ -108,16 +107,16 @@ void printGyro(Screen *pScreen)
 
     M5.Lcd.setCursor(0, 0, 1);
     M5.Lcd.printf("\r\n");
-    M5.Lcd.printf("Gyroscope [deg/s]:\r\n");
-    M5.Lcd.printf("X : %.2f\r\n", gyroX);
-    M5.Lcd.printf("Y : %.2f\r\n", gyroY);
-    M5.Lcd.printf("Z : %.2f\r\n", gyroZ);
+    M5.Lcd.printf("Gyroscope\r\n");
+    M5.Lcd.printf("X : %6.2f\r\n", gyroX);
+    M5.Lcd.printf("Y : %6.2f\r\n", gyroY);
+    M5.Lcd.printf("Z : %6.2f\r\n", gyroZ);
     M5.Lcd.printf(" [deg/sec]\r\n");
     M5.Lcd.printf("\r\n");
-    M5.Lcd.printf("Accelerometer:\r\n");
-    M5.Lcd.printf("X : %.2f\r\n", accX * 1000);
-    M5.Lcd.printf("Y : %.2f\r\n", accY * 1000);
-    M5.Lcd.printf("Z : %.2f\r\n", accZ * 1000);
+    M5.Lcd.printf("Accelerometer\r\n");
+    M5.Lcd.printf("X : %4.0f\r\n", accX * 1000);
+    M5.Lcd.printf("Y : %4.0f\r\n", accY * 1000);
+    M5.Lcd.printf("Z : %4.0f\r\n", accZ * 1000);
     M5.Lcd.printf(" [mg]\r\n");
     M5.Lcd.printf("\r\n");
 }
