@@ -36,7 +36,8 @@ uint32_t value = 0;
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
 
-#define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define FIDO_SERVICE_UUID "fffd"
+//#define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
 #define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 
 class MyServerCallbacks : public BLEServerCallbacks
@@ -45,27 +46,29 @@ class MyServerCallbacks : public BLEServerCallbacks
     {
         deviceConnected = true;
         BLEDevice::startAdvertising();
+        Serial.println("Client connected.");
+
     };
 
     void onDisconnect(BLEServer *pServer)
     {
         deviceConnected = false;
+        Serial.println("Client diconnected.");
     }
 };
 
-void blesetup()
+void BleScreen::onSetup()
 {
     Serial.begin(115200);
-
     // Create the BLE Device
-    BLEDevice::init("ESP32");
+    BLEDevice::init("M5Stick Authenticator");
 
     // Create the BLE Server
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
 
     // Create the BLE Service
-    BLEService *pService = pServer->createService(SERVICE_UUID);
+    BLEService *pService = pServer->createService(FIDO_SERVICE_UUID);
 
     // Create a BLE Characteristic
     pCharacteristic = pService->createCharacteristic(
@@ -84,7 +87,7 @@ void blesetup()
 
     // Start advertising
     BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
-    pAdvertising->addServiceUUID(SERVICE_UUID);
+    pAdvertising->addServiceUUID(FIDO_SERVICE_UUID);
     pAdvertising->setScanResponse(false);
     pAdvertising->setMinPreferred(0x0); // set value to 0x00 to not advertise this parameter
     BLEDevice::startAdvertising();
@@ -117,13 +120,6 @@ void bleloop()
     }
 }
 
-void printBle(Screen *pScreen)
-{
-    //bleloop();
-    M5.Lcd.setCursor(0, 0, 1);
-    M5.Lcd.printf("\r\nPlace for\r\nBLE settings\r\n");
-}
-
 void BleScreen::onLongPress()
 {
     M5.Lcd.printf("\r\nBLE longpress\r\n");
@@ -131,5 +127,7 @@ void BleScreen::onLongPress()
 
 void BleScreen::onRefresh()
 {
-    printBle(this);
+    bleloop();
+    M5.Lcd.setCursor(0, 0, 1);
+    M5.Lcd.printf("\r\nPlace for\r\nBLE settings\r\n");
 }

@@ -9,7 +9,8 @@
 
 void setup()
 {
-    // put your setup code here, to run once:
+    Serial.begin(115200);
+
     printf("Setup begins\r\n");
 
     M5.begin();
