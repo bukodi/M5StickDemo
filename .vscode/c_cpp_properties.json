@@ -8,6 +8,9 @@
                 "/home/bukodi/Arduino/libraries/M5StickC/src/",
                 "${workspaceFolder}/**"
             ],
+            "defines": [
+                "ESP32"
+            ],
             "forcedInclude": [],
             "intelliSenseMode": "gcc-x64",
             "compilerPath": "/usr/bin/gcc",
@@ -22,7 +25,9 @@
                 "/home/bukodi/Arduino/libraries/M5StickC/src/",
                 "${workspaceFolder}/**"
             ],
-            "defines": [],
+            "defines": [
+                "ESP32"
+            ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",

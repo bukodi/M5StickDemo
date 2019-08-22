@@ -1,3 +1,6 @@
+#ifndef _SCREENS_H /* include guards */
+#define _SCREENS_H
+
 #include <Arduino.h>
 
 class Screen
@@ -17,7 +20,11 @@ public:
         refreshPeriod = prefreshPeriod;
     }
 
-    void repaint();
+    void onSetup(){};
+    void onEnter();
+    void onLeave(){};
+    void onRefresh();
+    void onLongPress();
 };
 
 class ScreenMgr
@@ -41,9 +48,12 @@ public:
         longpressShouldClear = false;
     };
 
+    void setupScreens();
     void add(Screen *screen);
     void processUIActions();
     Screen *currentScreen();
-};              
+};
 
 extern ScreenMgr Screens;
+
+#endif /* _SCREENS_H */

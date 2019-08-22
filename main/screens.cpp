@@ -3,12 +3,26 @@
 #include <cstring>
 #include "screens.h"
 
-void Screen::repaint() {
+void Screen::onEnter()
+{
+    M5.Lcd.fillScreen(BLACK);
     (screenProc)(this);
 }
 
-ScreenMgr Screens;
+void Screen::onLongPress()
+{
+    M5.Lcd.println("LONG PRESS");
+}
 
+void Screen::onRefresh()
+{
+    if (screenProc != NULL)
+    {
+        (screenProc)(this);
+    }
+};
+
+ScreenMgr Screens;
 
 void ScreenMgr::add(Screen *screen)
 {
@@ -28,6 +42,11 @@ Screen *ScreenMgr::currentScreen()
     return screenArray[currentScreenIdx];
 }
 
+void ScreenMgr::setupScreens(){
+    for( int i = 0; i < screenArraySize; i++) {
+        screenArray[i]->onSetup();
+    }
+}
 
 void ScreenMgr::processUIActions()
 {
@@ -46,13 +65,14 @@ void ScreenMgr::processUIActions()
     {
         // Button A released
         longpressStartred = now;
+        currentScreen()->onLeave();
         currentScreenIdx = currentScreenIdx + 1;
         if (currentScreenIdx == screenArraySize)
         {
             currentScreenIdx = 0;
         }
-        M5.Lcd.fillScreen(BLACK);
-        (currentScreen()->screenProc)(currentScreen());
+        currentScreen()->onEnter();
+
         currentScreen()->lastPrinted = now;
         M5.Lcd.fillRect(0, 140, 80, 20, TFT_NAVY);
         uint32_t savedTextColor = M5.Lcd.textcolor;
@@ -79,7 +99,7 @@ void ScreenMgr::processUIActions()
         // Wait for longpress
         if ((now - longpressStartred) > longpressDuration)
         {
-            M5.Lcd.println("LONG PRESS");
+            currentScreen()->onLongPress();
             longpressStartred = now;
             longpressShouldClear = true;
         }
@@ -90,8 +110,7 @@ void ScreenMgr::processUIActions()
     {
         if ((now - currentScreen()->lastPrinted) > currentScreen()->refreshPeriod)
         {
-            // M5.Lcd.fillScreen(BLACK);
-            (currentScreen()->screenProc)(currentScreen());
+            currentScreen()->onRefresh();
             currentScreen()->lastPrinted = now;
         }
     }
