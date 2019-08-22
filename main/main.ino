@@ -18,9 +18,9 @@ void setup()
     M5.MPU6886.Init();
 
     Screens.add(new Screen(0, "Battery", 1000, &printAxp));
-    Screens.add(new Screen(1, "Bluetooth", 0, &printBle));
     Screens.add(new Screen(2, "Time", 0, &printTime));
     Screens.add(new Screen(3, "Gyroscope", 200, &printGyro));
+    Screens.add(new BleScreen());
 
     Screens.setupScreens();
     printf("Setup completed\r\n");

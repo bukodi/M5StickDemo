@@ -20,11 +20,11 @@ public:
         refreshPeriod = prefreshPeriod;
     }
 
-    void onSetup(){};
-    void onEnter();
-    void onLeave(){};
-    void onRefresh();
-    void onLongPress();
+    virtual void onSetup(){};
+    virtual void onEnter();
+    virtual void onLeave(){};
+    virtual void onRefresh();
+    virtual void onLongPress();
 };
 
 class ScreenMgr

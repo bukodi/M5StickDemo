@@ -6,7 +6,7 @@
 void Screen::onEnter()
 {
     M5.Lcd.fillScreen(BLACK);
-    (screenProc)(this);
+    onRefresh();
 }
 
 void Screen::onLongPress()
