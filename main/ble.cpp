@@ -28,7 +28,12 @@
 #include <BLE2902.h>
 
 BLEServer *pServer = NULL;
-BLECharacteristic *pCharacteristic = NULL;
+BLECharacteristic *pChar_fidoControlPoint = NULL;
+BLECharacteristic *pChar_fidoStatus = NULL;
+BLECharacteristic *pChar_fidoControlPointLength = NULL;
+BLECharacteristic *pChar_fidoServiceRevisionBitfield = NULL;
+BLECharacteristic *pChar_fidoServiceRevision = NULL;
+
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint32_t value = 0;
@@ -38,7 +43,12 @@ uint32_t value = 0;
 
 #define FIDO_SERVICE_UUID "fffd"
 //#define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
-#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+//#define CHARACTERISTIC_UUID     "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define UUID_fidoControlPoint                "F1D0FFF1-DEAA-ECEE-B42F-C9BA7ED623BB"
+#define UUID_fidoStatus                      "F1D0FFF2-DEAA-ECEE-B42F-C9BA7ED623BB"
+#define UUID_fidoControlPointLength          "F1D0FFF3-DEAA-ECEE-B42F-C9BA7ED623BB"
+#define UUID_fidoServiceRevisionBitfield     "F1D0FFF4-DEAA-ECEE-B42F-C9BA7ED623BB"
+#define UUID_fidoServiceRevision             "2A28"
 
 class MyServerCallbacks : public BLEServerCallbacks
 {
@@ -59,7 +69,6 @@ class MyServerCallbacks : public BLEServerCallbacks
 
 void BleScreen::onSetup()
 {
-    Serial.begin(115200);
     // Create the BLE Device
     BLEDevice::init("M5Stick Authenticator");
 
@@ -70,17 +79,27 @@ void BleScreen::onSetup()
     // Create the BLE Service
     BLEService *pService = pServer->createService(FIDO_SERVICE_UUID);
 
-    // Create a BLE Characteristic
-    pCharacteristic = pService->createCharacteristic(
-        CHARACTERISTIC_UUID,
-        BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_INDICATE);
+    // Create a BLE Characteristics
+    pChar_fidoControlPoint = pService->createCharacteristic(
+        UUID_fidoControlPoint,
+        BLECharacteristic::PROPERTY_WRITE);
+    //pChar_fidoControlPoint->setCallbacks()
+    pChar_fidoStatus = pService->createCharacteristic(
+        UUID_fidoStatus,
+        BLECharacteristic::PROPERTY_NOTIFY);
+    pChar_fidoControlPointLength = pService->createCharacteristic(
+        UUID_fidoControlPointLength,
+        BLECharacteristic::PROPERTY_READ);
+    pChar_fidoServiceRevisionBitfield = pService->createCharacteristic(
+        UUID_fidoServiceRevisionBitfield,
+        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
+    pChar_fidoServiceRevision = pService->createCharacteristic(
+        UUID_fidoServiceRevision,
+        BLECharacteristic::PROPERTY_READ);
 
     // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
     // Create a BLE Descriptor
-    pCharacteristic->addDescriptor(new BLE2902());
+    // pChar_fidoControlPoint->addDescriptor(new BLE2902());
 
     // Start the service
     pService->start();
@@ -99,8 +118,8 @@ void bleloop()
     // notify changed value
     if (deviceConnected)
     {
-        pCharacteristic->setValue((uint8_t *)&value, 4);
-        pCharacteristic->notify();
+        pChar_fidoStatus->setValue((uint8_t *)&value, 4);
+        pChar_fidoStatus->notify();
         value++;
         delay(10); // bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
     }
