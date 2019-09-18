@@ -1,9 +1,17 @@
 #include <M5StickC.h>
 #include "battery.h"
 
-void printAxp(Screen *pScreen)
+void BatteryScreen::onSetup()
 {
+    M5.Axp.EnableCoulombcounter();
+}
 
+void BatteryScreen::onLongPress()
+{
+}
+
+void BatteryScreen::onRefresh()
+{
     double vbat = 0.0;
     int discharge, charge;
     double temp = 0.0;
@@ -18,7 +26,7 @@ void printAxp(Screen *pScreen)
 
     //M5.Lcd.fillScreen(BLACK);
     M5.Lcd.setCursor(0, 0, 1);
-    M5.Lcd.printf("\r\n");                            
+    M5.Lcd.printf("\r\n");
     M5.Lcd.printf("vbat:%.3fV\r\n", vbat);                            //battery voltage
     M5.Lcd.printf("icharge:%dmA\r\n", charge);                        //battery charging current
     M5.Lcd.printf("idischg:%dmA\r\n", discharge);                     //battery output current
@@ -40,4 +48,3 @@ void printAxp(Screen *pScreen)
         esp_restart();
     }
 }
-

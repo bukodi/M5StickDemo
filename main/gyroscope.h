@@ -1,10 +1,10 @@
 #include "screens.h"
 
-class BatteryScreen : public Screen
+class GyroscopeScreen : public Screen
     
 {
     public:
-    BatteryScreen() : Screen("Battery", 100, NULL) {
+    GyroscopeScreen() : Screen("Gyroscope", 100, NULL) {
 
     };
     void onSetup();

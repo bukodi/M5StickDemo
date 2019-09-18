@@ -6,15 +6,13 @@
 class Screen
 {
 public:
-    int id;
     char *name;
     void (*screenProc)(Screen *pScreen);
     unsigned long refreshPeriod;
     unsigned long lastPrinted;
 
-    Screen(int pid, char *pname, unsigned long prefreshPeriod, void (*pscreenProc)(Screen *pScreen))
+    Screen(char *pname, unsigned long prefreshPeriod, void (*pscreenProc)(Screen *pScreen))
     {
-        id = pid;
         name = pname;
         screenProc = pscreenProc;
         refreshPeriod = prefreshPeriod;
