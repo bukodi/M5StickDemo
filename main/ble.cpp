@@ -28,6 +28,7 @@
 #include <BLE2902.h>
 
 BLEServer *pServer = NULL;
+BLEService *pService = NULL;
 BLECharacteristic *pChar_fidoControlPoint = NULL;
 BLECharacteristic *pChar_fidoStatus = NULL;
 BLECharacteristic *pChar_fidoControlPointLength = NULL;
@@ -52,6 +53,28 @@ uint32_t value = 0;
 
 class MyServerCallbacks : public BLEServerCallbacks
 {
+    void onConnect(BLEServer *pServer)
+    {
+        deviceConnected = true;
+        Serial.println("Client connected.");
+
+    };
+
+    void onDisconnect(BLEServer *pServer)
+    {
+        deviceConnected = false;
+        Serial.println("Client diconnected.");
+    }
+};
+
+class MyCharacteristicCallbacks : public BLECharacteristicCallbacks
+{
+	void onRead(BLECharacteristic* pCharacteristic) {
+        BLEUUID uuid = pCharacteristic->getUUID();
+    }
+	void onWrite(BLECharacteristic* pCharacteristic) {
+
+    }
     void onConnect(BLEServer *pServer)
     {
         deviceConnected = true;
@@ -111,6 +134,101 @@ void BleScreen::onSetup()
     pAdvertising->setMinPreferred(0x0); // set value to 0x00 to not advertise this parameter
     BLEDevice::startAdvertising();
     Serial.println("Waiting a client connection to notify...");
+}
+
+void startFIDOService() {
+    // Create the BLE Device
+    BLEDevice::init("M5Stick Authenticator");
+
+    // Create the BLE Server
+    pServer = BLEDevice::createServer();
+    pServer->setCallbacks(new MyServerCallbacks());
+
+    // Create the BLE Service
+    pService = pServer->createService(FIDO_SERVICE_UUID);
+
+    // Create a BLE Characteristics
+    pChar_fidoControlPoint = pService->createCharacteristic(
+        UUID_fidoControlPoint,
+        BLECharacteristic::PROPERTY_WRITE);
+    //pChar_fidoControlPoint->setCallbacks()
+    pChar_fidoStatus = pService->createCharacteristic(
+        UUID_fidoStatus,
+        BLECharacteristic::PROPERTY_NOTIFY);
+    pChar_fidoControlPointLength = pService->createCharacteristic(
+        UUID_fidoControlPointLength,
+        BLECharacteristic::PROPERTY_READ);
+    pChar_fidoServiceRevisionBitfield = pService->createCharacteristic(
+        UUID_fidoServiceRevisionBitfield,
+        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
+    pChar_fidoServiceRevision = pService->createCharacteristic(
+        UUID_fidoServiceRevision,
+        BLECharacteristic::PROPERTY_READ);
+
+    // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
+    // Create a BLE Descriptor
+    // pChar_fidoControlPoint->addDescriptor(new BLE2902());
+
+    // Start the service
+    pService->start();
+
+    // Start advertising
+    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+    pAdvertising->addServiceUUID(FIDO_SERVICE_UUID);
+    pAdvertising->setScanResponse(false);
+    pAdvertising->setMinPreferred(0x0); // set value to 0x00 to not advertise this parameter
+    BLEDevice::startAdvertising();
+    Serial.println("Waiting a client connection to notify...");
+}
+
+void stopFIDOService() {
+
+    // Create the BLE Server
+    pServer = BLEDevice::createServer();
+    pServer->setCallbacks(new MyServerCallbacks());
+
+    // Create the BLE Service
+    BLEService *pService = pServer->createService(FIDO_SERVICE_UUID);
+
+    // Create a BLE Characteristics
+    pChar_fidoControlPoint = pService->createCharacteristic(
+        UUID_fidoControlPoint,
+        BLECharacteristic::PROPERTY_WRITE);
+    //pChar_fidoControlPoint->setCallbacks()
+    pChar_fidoStatus = pService->createCharacteristic(
+        UUID_fidoStatus,
+        BLECharacteristic::PROPERTY_NOTIFY);
+    pChar_fidoControlPointLength = pService->createCharacteristic(
+        UUID_fidoControlPointLength,
+        BLECharacteristic::PROPERTY_READ);
+    pChar_fidoServiceRevisionBitfield = pService->createCharacteristic(
+        UUID_fidoServiceRevisionBitfield,
+        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
+    pChar_fidoServiceRevision = pService->createCharacteristic(
+        UUID_fidoServiceRevision,
+        BLECharacteristic::PROPERTY_READ);
+
+    // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
+    // Create a BLE Descriptor
+    // pChar_fidoControlPoint->addDescriptor(new BLE2902());
+
+
+    // Stop advertising
+    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+    pAdvertising->stop();
+
+    pService->stop();
+    pService->~BLEService();
+    pService = NULL;
+
+
+    pServer->~BLEServer();
+    pServer = NULL;
+
+        // Create the BLE Device
+    BLEDevice::deinit();
+    Serial.println("BLE service stoped.");
+
 }
 
 void bleloop()

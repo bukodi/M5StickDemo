@@ -8,6 +8,7 @@
 #include "gyroscope.h"
 #include "ble.h"
 #include "wifi.h"
+#include "mbedtls/x509_crt.h"
 
 void setup()
 {
@@ -23,8 +24,7 @@ void setup()
     //Screens.add(new GyroscopeScreen());
     //Screens.add(new WifiSetupScreen());
     //Screens.add(new Screen("WiFi Client", 0, &printTime));
-
-    Screens.add(new BleScreen());
+    //Screens.add(new BleScreen());
 
     Screens.setupScreens();
     printf("Setup completed\r\n");
