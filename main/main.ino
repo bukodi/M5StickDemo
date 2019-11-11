@@ -6,9 +6,9 @@
 #include "screens.h"
 #include "battery.h"
 #include "gyroscope.h"
-#include "ble.h"
-#include "wifi.h"
-#include "mbedtls/x509_crt.h"
+#include "ecckey.h"
+//#include "ble.h"
+//#include "wifi.h"
 
 void setup()
 {
@@ -19,9 +19,10 @@ void setup()
     M5.begin();
     M5.Lcd.fillScreen(BLACK);
 
-    //Screens.add(new BatteryScreen());
+    Screens.add(new BatteryScreen());
     Screens.add(new Screen("Time", 0, &printTime));
-    //Screens.add(new GyroscopeScreen());
+    Screens.add(new GyroscopeScreen());
+    Screens.add(new ECCKeyScreen());
     //Screens.add(new WifiSetupScreen());
     //Screens.add(new Screen("WiFi Client", 0, &printTime));
     //Screens.add(new BleScreen());
