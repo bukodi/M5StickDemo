@@ -3,10 +3,18 @@
 #include <cstring>
 #include "screens.h"
 
+#define MENU_HEIGHT 20
+
+void Screen::clear()
+{
+    M5.Lcd.fillRect(0, 0, M5.Lcd.width(), M5.Lcd.height() - MENU_HEIGHT, BLACK);
+    M5.Lcd.setCursor(0, 0, 1);
+}
+
 void Screen::onEnter()
 {
     M5.Lcd.fillScreen(BLACK);
-    onRefresh();
+    onRepaint();
 }
 
 void Screen::onLongPress()
@@ -14,7 +22,7 @@ void Screen::onLongPress()
     M5.Lcd.println("LONG PRESS");
 }
 
-void Screen::onRefresh()
+void Screen::onRepaint()
 {
     if (screenProc != NULL)
     {
@@ -73,8 +81,8 @@ void ScreenMgr::processUIActions()
         }
         currentScreen()->onEnter();
 
-        currentScreen()->lastPrinted = now;
-        M5.Lcd.fillRect(0, 140, 80, 20, TFT_NAVY);
+        currentScreen()->lastTimerTick = now;
+        M5.Lcd.fillRect(0, M5.Lcd.height()-MENU_HEIGHT, M5.Lcd.width(), MENU_HEIGHT, TFT_NAVY);
         uint32_t savedTextColor = M5.Lcd.textcolor;
         uint32_t savedBgColor = M5.Lcd.textbgcolor;
         uint8_t savedTextFont = M5.Lcd.textfont;
@@ -106,12 +114,12 @@ void ScreenMgr::processUIActions()
     }
 
     // Scheck screen refresh
-    if (currentScreen()->refreshPeriod > 0)
+    if (currentScreen()->timerPeriod > 0)
     {
-        if ((now - currentScreen()->lastPrinted) > currentScreen()->refreshPeriod)
+        if ((now - currentScreen()->lastTimerTick) > currentScreen()->timerPeriod)
         {
-            currentScreen()->onRefresh();
-            currentScreen()->lastPrinted = now;
+            currentScreen()->onTimerTick();
+            currentScreen()->lastTimerTick = now;
         }
     }
 }

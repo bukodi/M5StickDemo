@@ -8,7 +8,7 @@ class GyroscopeScreen : public Screen
 
     };
     void onSetup();
-    void onRefresh();
+    void onRepaint();
     void onLongPress();
 };
 

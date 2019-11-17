@@ -6,11 +6,12 @@ void BatteryScreen::onSetup()
     M5.Axp.EnableCoulombcounter();
 }
 
+
 void BatteryScreen::onLongPress()
 {
 }
 
-void BatteryScreen::onRefresh()
+void BatteryScreen::onRepaint()
 {
     double vbat = 0.0;
     int discharge, charge;

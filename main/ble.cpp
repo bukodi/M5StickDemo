@@ -262,9 +262,9 @@ void BleScreen::onLongPress()
     M5.Lcd.printf("\r\nBLE longpress\r\n");
 }
 
-void BleScreen::onRefresh()
+void BleScreen::onRepaint()
 {
     bleloop();
-    M5.Lcd.setCursor(0, 0, 1);
+    clear();
     M5.Lcd.printf("\r\nPlace for\r\nBLE settings\r\n");
 }

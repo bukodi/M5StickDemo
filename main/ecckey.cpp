@@ -4,8 +4,10 @@
 #include "mbedtls/ecp.h"
 #include "mbedtls/ecdsa.h"
 #include "mbedtls/pk.h"
+#include "settings.h"
 
 mbedtls_ecdsa_context ecKeyPair;
+int genCount = 0;
 
 static int myrand(void *rng_state, unsigned char *output, size_t len)
 {
@@ -60,8 +62,12 @@ void ECCKeyScreen::onLongPress()
     ret = mbedtls_pk_write_pubkey_pem(&key, pBuff, 16000 );
     M5.Lcd.printf("mbedtls_pk_write_pubkey_pem = %X\r\n", ret );    
     Serial.printf("mbedtls_pk_write_pubkey_pem = %X\r\n", ret );
-
     Serial.printf("The generated public key: \r\n%s\r\n", pBuff );
+
+    ret = mbedtls_pk_write_key_pem(&key, pBuff, 16000 );
+    M5.Lcd.printf("mbedtls_pk_write_key_pem = %X\r\n", ret );    
+    Serial.printf("mbedtls_pk_write_key_pem = %X\r\n", ret );
+    Serial.printf("The generated private key: \r\n%s\r\n", pBuff );
 
     free( pBuff );
     //if( ret == MBEDTLS_ERR_)
@@ -69,14 +75,20 @@ void ECCKeyScreen::onLongPress()
     mbedtls_ecdsa_free(&ecKeyPair);
     M5.Lcd.printf("mbedtls_ecdsa_free\r\n");
 
+    int genCount;
+    ConfigGetIntValue( "ECCGenCount", &genCount, 0 );
+    ConfigSetIntValue( "ECCGenCount", genCount + 1);
 }
 
-void ECCKeyScreen::onRefresh()
+void ECCKeyScreen::onRepaint()
 {
 
     M5.Lcd.setCursor(0, 0, 1);
     M5.Lcd.printf("\r\n");
     M5.Lcd.printf("ECCKey\r\n");
     M5.Lcd.printf("\r\n");
+    int genCount = 0;
+    ConfigGetIntValue( "ECCGenCount", &genCount, 0 );
+    M5.Lcd.printf("Gen count:%d\r\n", genCount);
 }
 

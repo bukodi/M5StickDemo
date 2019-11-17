@@ -8,20 +8,25 @@ class Screen
 public:
     char *name;
     void (*screenProc)(Screen *pScreen);
-    unsigned long refreshPeriod;
-    unsigned long lastPrinted;
+    unsigned long timerPeriod;
+    unsigned long lastTimerTick;
 
-    Screen(char *pname, unsigned long prefreshPeriod, void (*pscreenProc)(Screen *pScreen))
+    Screen(char *pname, unsigned long p_timerPeriod, void (*pscreenProc)(Screen *pScreen))
     {
         name = pname;
         screenProc = pscreenProc;
-        refreshPeriod = prefreshPeriod;
+        timerPeriod = p_timerPeriod;
     }
+
+    virtual void clear();
 
     virtual void onSetup(){};
     virtual void onEnter();
     virtual void onLeave(){};
-    virtual void onRefresh();
+    virtual void onRepaint();
+    virtual void onTimerTick(){
+        onRepaint();
+    };
     virtual void onLongPress();
 };
 

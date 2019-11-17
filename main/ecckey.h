@@ -4,11 +4,11 @@ class ECCKeyScreen : public Screen
     
 {
     public:
-    ECCKeyScreen() : Screen("ECC Key", 1000, NULL) {
+    ECCKeyScreen() : Screen("ECC Key", 0, NULL) {
 
     };
     void onSetup();
-    void onRefresh();
+    void onRepaint();
     void onLongPress();
 };
 

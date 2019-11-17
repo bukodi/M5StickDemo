@@ -1,9 +1,12 @@
 #include <M5StickC.h>
 #include <WiFi.h>
 #include <WiFiAP.h>
+#include <ESPAsyncWebServer.h>
+
 #include "wifi.h"
 
-extern "C" {
+extern "C"
+{
 #include <esp_err.h>
 #include <esp_wifi.h>
 #include <esp_event_loop.h>
@@ -14,7 +17,7 @@ const char *ssid = "Cica-AP";
 const char *password = nullptr; //"12345678";
 
 // Set web server port number to 80
-WiFiServer server(80);
+AsyncWebServer *pWebServer;
 
 // Variable to store the HTTP request
 String header;
@@ -25,31 +28,40 @@ void WifiSetupScreen::onSetup()
 
 void WifiSetupScreen::onLongPress()
 {
-    if (server)
+    if (pWebServer != nullptr)
     {
         M5.Lcd.printf("\r\nStop WiFi\r\n");
-        server.end();
-        //WiFi.stopSmartConfig();
+        pWebServer->end();
+        pWebServer->~AsyncWebServer();
+        pWebServer = nullptr;
         WiFi.softAPdisconnect(true);
+        onRepaint();
     }
     else
     {
         M5.Lcd.printf("\r\nStart WiFi\r\n");
         WiFi.disconnect();
         bool isOk = WiFi.mode(WIFI_AP_STA);
-        Serial.printf( "ssid=\"%s\"\r\n", ssid);
-        Serial.println( isOk ? "Mode set OK" : "Mode set failed");
         isOk = WiFi.softAP(ssid, password);
-        Serial.println( isOk ? "Start AP OK" : "Start AP failed");
-        //WiFi.beginSmartConfig();
-        server.begin();
+
+        pWebServer = new AsyncWebServer(80);
+
+        pWebServer->on("/hello", HTTP_GET, [](AsyncWebServerRequest *request){
+            request->send(200, "text/plain", "Hello World");
+        });
+        pWebServer->begin();
+        onRepaint();
     }
 }
 
-void WifiSetupScreen::onRefresh()
+void WifiSetupScreen::onTimerTick()
 {
-    M5.Lcd.setCursor(0, 0, 1);
-    if (server)
+}
+
+void WifiSetupScreen::onRepaint()
+{
+    clear();
+    if (pWebServer != nullptr )
     {
         M5.Lcd.printf("\r\nWiFi active\r\n");
         M5.Lcd.printf(WiFi.softAPIP().toString().c_str());
@@ -64,10 +76,14 @@ void WifiSetupScreen::onRefresh()
         M5.Lcd.printf("\r\n");
         M5.Lcd.printf(WiFi.softAPIP().toString().c_str());
         M5.Lcd.printf("\r\n");
-
+        M5.Lcd.printf("Long press:\r\n");
+        M5.Lcd.printf("Stop\r\n");
     }
     else
     {
         M5.Lcd.printf("\r\nWiFi inactive\r\n");
+        M5.Lcd.printf("\r\n");
+        M5.Lcd.printf("Long press:\r\n");
+        M5.Lcd.printf("Start\r\n");
     }
 }

@@ -8,7 +8,8 @@
 #include "gyroscope.h"
 #include "ecckey.h"
 //#include "ble.h"
-//#include "wifi.h"
+#include "wifi.h"
+#include "settings.h"
 
 void setup()
 {
@@ -16,14 +17,16 @@ void setup()
 
     printf("Setup begins\r\n");
 
+
     M5.begin();
     M5.Lcd.fillScreen(BLACK);
 
     Screens.add(new BatteryScreen());
+    Screens.add(new SettingsScreen());
     Screens.add(new Screen("Time", 0, &printTime));
     Screens.add(new GyroscopeScreen());
     Screens.add(new ECCKeyScreen());
-    //Screens.add(new WifiSetupScreen());
+    Screens.add(new WifiSetupScreen());
     //Screens.add(new Screen("WiFi Client", 0, &printTime));
     //Screens.add(new BleScreen());
 

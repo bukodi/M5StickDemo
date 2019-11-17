@@ -10,7 +10,7 @@ void GyroscopeScreen::onLongPress()
 {
 }
 
-void GyroscopeScreen::onRefresh()
+void GyroscopeScreen::onRepaint()
 {
     float accX = 0;
     float accY = 0;

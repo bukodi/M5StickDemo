@@ -6,6 +6,8 @@
                 "/home/bukodi/.arduino15/packages/esp32/tools/**",
                 "/home/bukodi/.arduino15/packages/esp32/hardware/esp32/1.0.2/**",
                 "/home/bukodi/Arduino/libraries/M5StickC/src/",
+                "/home/bukodi/Arduino/libraries/AsyncTCP/src/",
+                "/home/bukodi/Arduino/libraries/ESPAsyncWebServer/src/",
                 "${workspaceFolder}/**"
             ],
             "defines": [
@@ -23,6 +25,8 @@
                 "/home/bukodi/.arduino15/packages/esp32/tools/**",
                 "/home/bukodi/.arduino15/packages/esp32/hardware/esp32/1.0.2/**",
                 "/home/bukodi/Arduino/libraries/M5StickC/src/",
+                "/home/bukodi/Arduino/libraries/AsyncTCP/src/",
+                "/home/bukodi/Arduino/libraries/ESPAsyncWebServer/src/",
                 "${workspaceFolder}/**"
             ],
             "defines": [

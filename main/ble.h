@@ -8,7 +8,7 @@ class BleScreen : public Screen
 
     };
     void onSetup();
-    void onRefresh();
+    void onRepaint();
     void onLongPress();
 };
 
