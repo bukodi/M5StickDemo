@@ -1,9 +1,9 @@
 #include <M5StickC.h>
 #include <WiFi.h>
 #include <WiFiAP.h>
-#include <ESPAsyncWebServer.h>
 
 #include "wifi.h"
+#include "httpsrv.h"
 
 extern "C"
 {
@@ -16,8 +16,6 @@ extern "C"
 const char *ssid = "Cica-AP";
 const char *password = nullptr; //"12345678";
 
-// Set web server port number to 80
-AsyncWebServer *pWebServer;
 
 // Variable to store the HTTP request
 String header;
@@ -26,14 +24,13 @@ void WifiSetupScreen::onSetup()
 {
 }
 
+
 void WifiSetupScreen::onLongPress()
 {
-    if (pWebServer != nullptr)
+    if ( HttpSrv_isStarted() )
     {
         M5.Lcd.printf("\r\nStop WiFi\r\n");
-        pWebServer->end();
-        pWebServer->~AsyncWebServer();
-        pWebServer = nullptr;
+        HttpSrv_Stop();
         WiFi.softAPdisconnect(true);
         onRepaint();
     }
@@ -43,13 +40,7 @@ void WifiSetupScreen::onLongPress()
         WiFi.disconnect();
         bool isOk = WiFi.mode(WIFI_AP_STA);
         isOk = WiFi.softAP(ssid, password);
-
-        pWebServer = new AsyncWebServer(80);
-
-        pWebServer->on("/hello", HTTP_GET, [](AsyncWebServerRequest *request){
-            request->send(200, "text/plain", "Hello World");
-        });
-        pWebServer->begin();
+        HttpSrv_Start();
         onRepaint();
     }
 }
@@ -61,7 +52,7 @@ void WifiSetupScreen::onTimerTick()
 void WifiSetupScreen::onRepaint()
 {
     clear();
-    if (pWebServer != nullptr )
+    if ( HttpSrv_isStarted() )
     {
         M5.Lcd.printf("\r\nWiFi active\r\n");
         M5.Lcd.printf(WiFi.softAPIP().toString().c_str());
