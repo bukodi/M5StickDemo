@@ -15,11 +15,10 @@ void init()
         return;
     }
     int err = nvs_flash_init();
-    Serial.printf("nvs_flash_init = %X\r\n", err);
     initCompleted = true;
 }
 
-int ConfigGetIntValue( char *key, int *retValue, int defaultValue ) {
+int ConfigGetIntValue( const char *key, int *retValue, int defaultValue ) {
     init();
     nvs_handle nvsHandle = 0L;
     int err = nvs_open(CONFIG_NAMESPACE, NVS_READWRITE, &nvsHandle);
@@ -47,7 +46,7 @@ int ConfigGetIntValue( char *key, int *retValue, int defaultValue ) {
     return err;
 }
 
-int ConfigGetStrValue( char *key, char *retBuff, int buffLen ) {
+int ConfigGetStrValue( const char *key, char *retBuff, int buffLen ) {
     init();
     nvs_handle nvsHandle = 0L;
     int err = nvs_open(CONFIG_NAMESPACE, NVS_READWRITE, &nvsHandle);
@@ -69,7 +68,7 @@ int ConfigGetStrValue( char *key, char *retBuff, int buffLen ) {
     return err;
 }
 
-int ConfigSetIntValue( char *key, int value ) {
+int ConfigSetIntValue( const char *key, int value ) {
     init();
     nvs_handle nvsHandle = 0L;
     int err = nvs_open(CONFIG_NAMESPACE, NVS_READWRITE, &nvsHandle);
@@ -86,7 +85,7 @@ int ConfigSetIntValue( char *key, int value ) {
     return err;
 }
 
-int ConfigSetStrValue( char *key, char* value ) {
+int ConfigSetStrValue( const char *key, const char* value ) {
     init();
     nvs_handle nvsHandle = 0L;
     int err = nvs_open(CONFIG_NAMESPACE, NVS_READWRITE, &nvsHandle);

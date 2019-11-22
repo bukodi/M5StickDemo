@@ -24,6 +24,7 @@ static int myrand(void *rng_state, unsigned char *output, size_t len)
             use_len = sizeof(int);
         }
 
+        // TODO: use esp32_random(), and turn on wifi before
         rnd = rand();
         memcpy(output, &rnd, use_len);
         output += use_len;

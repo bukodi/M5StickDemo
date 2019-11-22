@@ -4,6 +4,7 @@
 void GyroscopeScreen::onSetup()
 {
     M5.MPU6886.Init();
+    startUITimer(100);
 }
 
 void GyroscopeScreen::onLongPress()

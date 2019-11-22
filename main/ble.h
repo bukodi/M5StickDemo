@@ -4,7 +4,7 @@ class BleScreen : public Screen
     
 {
     public:
-    BleScreen() : Screen("Bluetooth", 1000, NULL) {
+    BleScreen() : Screen("Bluetooth") {
 
     };
     void onSetup();

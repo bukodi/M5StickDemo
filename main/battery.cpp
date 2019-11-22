@@ -1,9 +1,11 @@
 #include <M5StickC.h>
 #include "battery.h"
 
+
 void BatteryScreen::onSetup()
 {
     M5.Axp.EnableCoulombcounter();
+    startUITimer(100);
 }
 
 

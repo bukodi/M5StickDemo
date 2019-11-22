@@ -22,13 +22,7 @@ void Screen::onLongPress()
     M5.Lcd.println("LONG PRESS");
 }
 
-void Screen::onRepaint()
-{
-    if (screenProc != NULL)
-    {
-        (screenProc)(this);
-    }
-};
+void Screen::onRepaint(){};
 
 ScreenMgr Screens;
 
@@ -50,8 +44,10 @@ Screen *ScreenMgr::currentScreen()
     return screenArray[currentScreenIdx];
 }
 
-void ScreenMgr::setupScreens(){
-    for( int i = 0; i < screenArraySize; i++) {
+void ScreenMgr::setupScreens()
+{
+    for (int i = 0; i < screenArraySize; i++)
+    {
         screenArray[i]->onSetup();
     }
 }
@@ -82,7 +78,7 @@ void ScreenMgr::processUIActions()
         currentScreen()->onEnter();
 
         currentScreen()->lastTimerTick = now;
-        M5.Lcd.fillRect(0, M5.Lcd.height()-MENU_HEIGHT, M5.Lcd.width(), MENU_HEIGHT, TFT_NAVY);
+        M5.Lcd.fillRect(0, M5.Lcd.height() - MENU_HEIGHT, M5.Lcd.width(), MENU_HEIGHT, TFT_NAVY);
         uint32_t savedTextColor = M5.Lcd.textcolor;
         uint32_t savedBgColor = M5.Lcd.textbgcolor;
         uint8_t savedTextFont = M5.Lcd.textfont;

@@ -23,10 +23,10 @@ void setup()
 
     Screens.add(new BatteryScreen());
     Screens.add(new SettingsScreen());
-    Screens.add(new Screen("Time", 0, &printTime));
     Screens.add(new GyroscopeScreen());
     Screens.add(new ECCKeyScreen());
     Screens.add(new WifiSetupScreen());
+    Screens.add(new WifiClientScreen());
     //Screens.add(new Screen("WiFi Client", 0, &printTime));
     //Screens.add(new BleScreen());
 
@@ -48,9 +48,4 @@ void printSetup(Screen *pScreen)
 {
 }
 
-void printTime(Screen *pScreen)
-{
-    M5.Lcd.setCursor(0, 0, 1);
-    M5.Lcd.printf("\r\nPlace for\r\ntime settings\r\n");
-}
 

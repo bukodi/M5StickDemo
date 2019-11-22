@@ -7,15 +7,21 @@ class Screen
 {
 public:
     char *name;
-    void (*screenProc)(Screen *pScreen);
-    unsigned long timerPeriod;
+    unsigned long timerPeriod = 0;
     unsigned long lastTimerTick;
 
-    Screen(char *pname, unsigned long p_timerPeriod, void (*pscreenProc)(Screen *pScreen))
+
+    Screen(char *pname)
     {
         name = pname;
-        screenProc = pscreenProc;
+    }
+
+    void startUITimer(unsigned long p_timerPeriod ) {
         timerPeriod = p_timerPeriod;
+    }
+
+    void stopUITimer() {
+        timerPeriod = 0;
     }
 
     virtual void clear();

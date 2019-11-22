@@ -4,8 +4,7 @@ class BatteryScreen : public Screen
     
 {
     public:
-    BatteryScreen() : Screen("Battery", 100, NULL) {
-
+    BatteryScreen() : Screen("Battery") {
     };
     void onSetup();
     void onRepaint();

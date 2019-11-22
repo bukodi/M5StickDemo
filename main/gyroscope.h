@@ -4,7 +4,7 @@ class GyroscopeScreen : public Screen
     
 {
     public:
-    GyroscopeScreen() : Screen("Gyroscope", 100, NULL) {
+    GyroscopeScreen() : Screen("Gyroscope") {
 
     };
     void onSetup();
