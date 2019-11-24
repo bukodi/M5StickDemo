@@ -1,5 +1,6 @@
 #include <ESPAsyncWebServer.h>
 
+#include "ecckey.h"
 #include "httpsrv.h"
 #include "settings.h"
 #include "wifi.h"
@@ -63,17 +64,13 @@ void handleWifiPOST(AsyncWebServerRequest *request)
 
 void handlePubKeyGET(AsyncWebServerRequest *request)
 {
+    char *buff = (char *)malloc(4096);
+    getPublicKeyPEM( buff, 4096);
     String body =
-        "  <h2>WiFi setup</h2>"
-        "  <form action=\"/wifi\" method=\"post\">"
-        "    SSID:<br>"
-        "    <input type=\"text\" name=\"SSID\">"
-        "    <br>"
-        "    Password:<br>"
-        "    <input type=\"text\" name=\"password\">"
-        "    <br><br>"
-        "    <input type=\"submit\" value=\"Add\">"
-        "  </form>";
+        "  <h2>Public KEY</h2>"
+        "  <pre>";
+    body += buff;
+    body += "  </pre>";
     request->send(200, "text/html", head + body + tail);
 }
 

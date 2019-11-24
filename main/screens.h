@@ -8,7 +8,8 @@ class Screen
 public:
     char *name;
     unsigned long timerPeriod = 0;
-    unsigned long lastTimerTick;
+    unsigned long timerLastTick;
+    bool timerActiveInBackground;
 
 
     Screen(char *pname)
@@ -16,8 +17,9 @@ public:
         name = pname;
     }
 
-    void startUITimer(unsigned long p_timerPeriod ) {
-        timerPeriod = p_timerPeriod;
+    void startUITimer(unsigned long periodInMs, bool activeInBackground = false) {
+        timerPeriod = periodInMs;
+        timerActiveInBackground = activeInBackground;
     }
 
     void stopUITimer() {
@@ -61,6 +63,7 @@ public:
     void add(Screen *screen);
     void processUIActions();
     Screen *currentScreen();
+    void checkScreenTimers();
 };
 
 extern ScreenMgr Screens;

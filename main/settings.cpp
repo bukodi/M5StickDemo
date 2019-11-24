@@ -68,6 +68,27 @@ int ConfigGetStrValue( const char *key, char *retBuff, int buffLen ) {
     return err;
 }
 
+int ConfigGetBlob( const char *key, void *retBuff, size_t *buffLen ) {
+    init();
+    nvs_handle nvsHandle = 0L;
+    int err = nvs_open(CONFIG_NAMESPACE, NVS_READWRITE, &nvsHandle);
+    if( err ) {
+        return err;
+    }
+
+    err = nvs_get_blob(nvsHandle, key, retBuff, buffLen);
+    switch (err) {
+        case ESP_OK:                
+            break;
+        case ESP_ERR_NVS_NOT_FOUND:
+            break;
+        default:
+            break;
+    }
+    nvs_close(nvsHandle);                   
+    return err;
+}
+
 int ConfigSetIntValue( const char *key, int value ) {
     init();
     nvs_handle nvsHandle = 0L;
@@ -90,10 +111,33 @@ int ConfigSetStrValue( const char *key, const char* value ) {
     nvs_handle nvsHandle = 0L;
     int err = nvs_open(CONFIG_NAMESPACE, NVS_READWRITE, &nvsHandle);
     if( err ) {
-        return err;
+        throw err;
     }
 
     err = nvs_set_str(nvsHandle, key, value);
+    if( err ) {
+        throw err;
+    }
+    if( !err ) {
+        err = nvs_commit(nvsHandle);
+    } 
+
+    nvs_close(nvsHandle);                   
+    return err;
+}
+
+int ConfigSetBlob( const char *key, const void* buff, size_t buffLen ) {
+    init();
+    nvs_handle nvsHandle = 0L;
+    int err = nvs_open(CONFIG_NAMESPACE, NVS_READWRITE, &nvsHandle);
+    if( err ) {
+        throw err;
+    }
+
+    err = nvs_set_blob(nvsHandle, key, buff, buffLen);
+    if( err ) {
+        throw err;
+    }
     if( !err ) {
         err = nvs_commit(nvsHandle);
     } 

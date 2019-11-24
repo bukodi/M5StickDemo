@@ -77,7 +77,7 @@ void ScreenMgr::processUIActions()
         }
         currentScreen()->onEnter();
 
-        currentScreen()->lastTimerTick = now;
+        currentScreen()->timerLastTick = now;
         M5.Lcd.fillRect(0, M5.Lcd.height() - MENU_HEIGHT, M5.Lcd.width(), MENU_HEIGHT, TFT_NAVY);
         uint32_t savedTextColor = M5.Lcd.textcolor;
         uint32_t savedBgColor = M5.Lcd.textbgcolor;
@@ -109,13 +109,17 @@ void ScreenMgr::processUIActions()
         }
     }
 
-    // Scheck screen refresh
-    if (currentScreen()->timerPeriod > 0)
+    // Check screen timers
+    for (int i = 0; i < screenArraySize; i++)
     {
-        if ((now - currentScreen()->lastTimerTick) > currentScreen()->timerPeriod)
-        {
-            currentScreen()->onTimerTick();
-            currentScreen()->lastTimerTick = now;
-        }
+        if( screenArray[i]->timerPeriod > 0 ) {
+            if( screenArray[i]->timerActiveInBackground || i == currentScreenIdx ) {
+                if ((now - screenArray[i]->timerLastTick) > screenArray[i]->timerPeriod)
+                {
+                    screenArray[i]->onTimerTick();
+                    screenArray[i]->timerLastTick = now;
+                }                
+            }
+        };
     }
 }
