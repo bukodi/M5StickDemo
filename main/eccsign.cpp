@@ -3,12 +3,13 @@
 #include "eccsign.h"
 #include "settings.h"
 #include "ecckey.h"
+#include "util.h"
 
 char *messageBuff; // Contains non-null if a sign requested for a message
 unsigned char messageHash[32];
 char *signBuff; // Contains nullptr if waiting for signature
 
-void setSignRequest( char *message ) {    
+void setSignRequest( const char *message ) {    
     free( messageBuff );
     free( signBuff );
 
@@ -16,7 +17,7 @@ void setSignRequest( char *message ) {
     strcpy( messageBuff, message );
 }
 
-int getSignature( char *message, int msgLen, char *sign, int *signLen ) {
+int getSignature( char *message, int msgLen, char *sign, int signLen ) {
     int err = 0;
 
     if( messageBuff == nullptr ) {
@@ -25,25 +26,20 @@ int getSignature( char *message, int msgLen, char *sign, int *signLen ) {
 
     if( strlen( messageBuff) +1 < msgLen ) {
         return ERR_BUFFER_TOO_SMALL;
+    } else {
+        strcpy( message, messageBuff );
     }
 
     if( signBuff == nullptr ) {
         return ERR_WAITING_FOR_SIGN;
+    } 
+
+    if( strlen( signBuff) + 1 < signLen) {
+        return ERR_BUFFER_TOO_SMALL;
+    } else {
+        strcpy( sign, signBuff );
     }
 
-    mbedtls_pk_context key;
-    if( err = loadKeyPair( &key ) ) {
-        return err;
-    }
-
-    hashData( messageBuff, strlen( messageBuff), messageHash );
-
-    size_t signBuffLen = 256;
-    unsigned char signBuff[256];
-    
-    signHash( &key, messageHash, signBuff, &signBuffLen );
-
-    
     return err;
 }
 
@@ -54,39 +50,71 @@ void ECCSignScreen::onSetup()
 
 void ECCSignScreen::onLongPress()
 {
+    if( messageBuff == nullptr ) {
+        return;
+    }
+
+    if( signBuff != nullptr ) {
+        return;
+    }
+
+    mbedtls_pk_context key;
+    loadKeyPair( &key );
+    Serial.printf("Keypair loaded:\r\n");
+
+    hashData( messageBuff, strlen( messageBuff), messageHash );
+    Serial.printf("Hash completed.\r\n");
+    dumpHex( messageHash, 32);
+
+    size_t signBytesLen = 512;
+    unsigned char *signBytes = (unsigned char*)malloc(signBytesLen);
+    
+    signHash( &key, messageHash, signBytes, &signBytesLen );
+    Serial.printf("Sign completed.\r\n");
+    dumpHex( signBytes, signBytesLen);
+
+    size_t outputLen;
+
+    signBuff = (char*)malloc(outputLen * 2 + 1);
+
+    strcpy( signBuff, "SIGNED");
+
+    //base64_encode( signBytes, signBytesLen, signBuff );
+    Serial.printf("Signature:\r\n%s\r\n", signBuff);
+    //onRepaint();
 }
+
+unsigned long lastOn = millis();
+unsigned long lastOff = lastOn + 1;
 
 void ECCSignScreen::onTimerTick()
 {
-    //if( messageBuff == null )
+    if( messageBuff == nullptr || signBuff != nullptr ) {
+        if( lastOn > lastOff ) {
+            //M5.
+        }
+    } else {
+
+    }
 }
 
 void ECCSignScreen::onRepaint()
 {
 
+    Serial.printf("onRepaint\r\n");
     clear();
     M5.Lcd.printf("\r\n");
     
-    int genCount = 0;
-    ConfigGetIntValue("ECCGenCount", &genCount, 0);
-    M5.Lcd.printf("Gen count:%d\r\n", genCount);
-    
-    mbedtls_pk_context key;
-    if( loadKeyPair( &key ) ) {
-        M5.Lcd.printf("\r\n");
-        M5.Lcd.printf("Key not exists.\r\n", genCount);        
-        M5.Lcd.printf("\r\nLong press:\r\n");
-        M5.Lcd.printf("Generate new key\r\n");
-    } else {
-        unsigned char hashBuff[32];
-        hashPublicKey( &key, hashBuff);
+    // TODO check "is ECC key generated?""
 
-        M5.Lcd.printf("\r\nPub key hash:\r\n");
-        for( int i1 =0; i1 < 32; i1 += 4 ) {
-            M5.Lcd.printf("  %02X%02X%02X%02X\r\n", hashBuff[i1], hashBuff[i1+1], hashBuff[i1+2], hashBuff[i1+3] );
-        }
-        M5.Lcd.printf("\r\nLong press:\r\n");
-        M5.Lcd.printf("Generate new key\r\n");
+    if( messageBuff == nullptr ) {
+        M5.Lcd.printf("\r\n Nothing\r\n to sign.\r\n");    
+    } else if( signBuff == nullptr ) {
+        M5.Lcd.printf("-- LP:Sign --\r\n");    
+        M5.Lcd.printf("%s", messageBuff );    
+    } else {
+        M5.Lcd.printf("-- Signed: --\r\n");    
+        M5.Lcd.printf("%s", messageBuff );    
     }
 }
 

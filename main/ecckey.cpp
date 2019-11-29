@@ -154,13 +154,6 @@ void signHash( mbedtls_pk_context *key, const unsigned char *hash, unsigned char
         Serial.printf("mbedtls_pk_sign = %X\r\n", err);
         throw new Error(err);
     }
-
-    Serial.printf("mbedtls_pk_sign -> buffSize = %d\r\n", *buffSize);
-    for( int i2 =0; i2 < *buffSize; i2 ++ ) {
-        Serial.printf("%02X ", pBuff[i2]);
-    }
-    Serial.printf("\r\n");
-
 }
 
 void ECCKeyScreen::onSetup()

@@ -157,4 +157,6 @@ void SettingsScreen::onLongPress()
 
 void SettingsScreen::onRepaint()
 {
+    clear();
+    
 }

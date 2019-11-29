@@ -19,6 +19,6 @@ class ECCSignScreen : public Screen
     void onTimerTick();
 };
 
-void setSignRequest( char *message, int msgLen );
-int getSignature( char *message, int *pMsgLen, char *sign, int *pSignLen );
+void setSignRequest( const char *message);
+int getSignature( char *message, int pMsgLen, char *sign, int pSignLen );
 

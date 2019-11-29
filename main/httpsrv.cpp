@@ -1,6 +1,7 @@
 #include <ESPAsyncWebServer.h>
 
 #include "ecckey.h"
+#include "eccsign.h"
 #include "httpsrv.h"
 #include "settings.h"
 #include "wifi.h"
@@ -24,7 +25,9 @@ void handleIndexGET(AsyncWebServerRequest *request)
     String body =
         "  <h2>M5 Sctick Demo</h2><br>"
         "  <a href=\"/wifi\">WiFi setup</a><br>"
-        "  <a href=\"/pubkey\">Public key</a><br>";
+        "  <a href=\"/pubkey\">Public key</a><br>"
+        "  <a href=\"/sign\">Request signature</a><br>"
+        "  <a href=\"/signresult\">Sing result</a><br>";
     request->send(200, "text/html", head + body + tail);
 }
 
@@ -62,16 +65,67 @@ void handleWifiPOST(AsyncWebServerRequest *request)
     request->send(200, "text/html", head + body + tail);
 }
 
+void handleSignGET(AsyncWebServerRequest *request)
+{
+    String body =
+        "  <h2>Request signature</h2>"
+        "  <form action=\"/sign\" method=\"post\">"
+        "    Message:<br>"
+        "    <input type=\"text\" name=\"msg\">"
+        "    <br>"
+        "    <input type=\"submit\" value=\"Send\">"
+        "  </form>";
+    request->send(200, "text/html", head + body + tail);
+}
+
+void handleSignPOST(AsyncWebServerRequest *request)
+{
+    if (request->hasParam("msg", true))
+    {
+        AsyncWebParameter *p = request->getParam("msg", true);
+        setSignRequest(p->value().c_str());
+    }
+    String body =
+        "  <h2>Signature requested.</h2><br>"
+        "  <a href=\"/signresult\">Result</a><br>";
+    request->send(200, "text/html", head + body + tail);
+}
+
+void handleSignResultGET(AsyncWebServerRequest *request)
+{
+    int msgLen = 1024;
+    int signLen = 1024;
+    char *msgBuff = (char *)malloc(msgLen);
+    char *signBuff = (char *)malloc(signLen);
+    getSignature(msgBuff, msgLen, signBuff, signLen);
+    String body =
+        "  <h2>Signature result</h2>"
+        "  <p>Message:</p>"
+        "  <pre>";
+    body += msgBuff;
+    body += "  </pre>"
+            "  <p>Signature:</p>"
+            "  <pre>";
+    body += signBuff;
+    body += "  </pre>"
+            "  <hr>"
+            "  <a href=\"/\">Index</a><br>";
+    request->send(200, "text/html", head + body + tail);
+    free(msgBuff);
+    free(signBuff);
+}
+
 void handlePubKeyGET(AsyncWebServerRequest *request)
 {
     char *buff = (char *)malloc(4096);
-    getPublicKeyPEM( buff, 4096);
+    getPublicKeyPEM(buff, 4096);
     String body =
         "  <h2>Public KEY</h2>"
         "  <pre>";
     body += buff;
     body += "  </pre>";
     request->send(200, "text/html", head + body + tail);
+    free(buff);
 }
 
 bool HttpSrv_isStarted()
@@ -88,6 +142,9 @@ void HttpSrv_Start()
     pWebServer->on("/wifi", HTTP_GET, handleWifiGET);
     pWebServer->on("/wifi", HTTP_POST, handleWifiPOST);
     pWebServer->on("/pubkey", HTTP_GET, handlePubKeyGET);
+    pWebServer->on("/signresult", HTTP_GET, handleSignResultGET);
+    pWebServer->on("/sign", HTTP_GET, handleSignGET);
+    pWebServer->on("/sign", HTTP_POST, handleSignPOST);
     pWebServer->begin();
 }
 

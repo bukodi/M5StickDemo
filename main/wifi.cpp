@@ -109,6 +109,7 @@ void WifiClientScreen::onTimerTick()
     if( WiFi.status() == WL_CONNECTED ) {
         M5.Lcd.printf("\r\nConnected\r\n");
         stopUITimer();
+        ConfigSetIntValue(ConfigKey_WiFiSTA_autoconnect, 1);
     } else {
         M5.Lcd.print(".");
     }
@@ -122,6 +123,7 @@ void WifiClientScreen::onSetup()
     if (autoconnect && isSTAConfigured() )
     {
         startSTA();
+        HttpSrv_Start();
     }
 
 }

@@ -7,6 +7,7 @@
 #include "battery.h"
 #include "gyroscope.h"
 #include "ecckey.h"
+#include "eccsign.h"
 //#include "ble.h"
 #include "wifi.h"
 #include "settings.h"
@@ -21,12 +22,13 @@ void setup()
     M5.begin();
     M5.Lcd.fillScreen(BLACK);
 
-    Screens.add(new BatteryScreen());
-    Screens.add(new SettingsScreen());
-    Screens.add(new GyroscopeScreen());
+    Screens.add(new ECCSignScreen());
     Screens.add(new ECCKeyScreen());
     Screens.add(new WifiSetupScreen());
     Screens.add(new WifiClientScreen());
+    Screens.add(new BatteryScreen());
+    //Screens.add(new SettingsScreen());
+    Screens.add(new GyroscopeScreen());
     //Screens.add(new Screen("WiFi Client", 0, &printTime));
     //Screens.add(new BleScreen());
 
