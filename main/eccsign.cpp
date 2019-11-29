@@ -5,40 +5,39 @@
 #include "ecckey.h"
 #include "util.h"
 
-char *messageBuff; // Contains non-null if a sign requested for a message
-unsigned char messageHash[32];
-char *signBuff; // Contains nullptr if waiting for signature
+//char *messageBuff; // Contains non-null if a sign requested for a message
 
-void setSignRequest( const char *message ) {    
-    free( messageBuff );
-    free( signBuff );
+//char *signBuff; // Contains nullptr if waiting for signature
 
-    messageBuff = (char *) malloc( strlen( message )  + 1);
-    strcpy( messageBuff, message );
+String messageToSign = "";
+String messageHash = "";
+String signature = "";
+
+void setSignRequest( String message ) {    
+    signature = "";
+
+    Serial.printf("Before set messageBuff=%s\n", message);
+    messageToSign = message;
+    Serial.printf("After set messageBuff=%s\n", messageToSign);
+    // Turn LED on
+    digitalWrite (10, LOW);	
 }
 
-int getSignature( char *message, int msgLen, char *sign, int signLen ) {
+int getSignature( String& retMsg, String& retSign ) {
     int err = 0;
 
-    if( messageBuff == nullptr ) {
+    if( messageToSign.length() == 0 ) {
+        retMsg = "No pending message.";
+        retSign =  "No signature.";
         return ERR_NO_SIGN_REQUEST;
     }
+    retMsg = messageToSign;
 
-    if( strlen( messageBuff) +1 < msgLen ) {
-        return ERR_BUFFER_TOO_SMALL;
-    } else {
-        strcpy( message, messageBuff );
-    }
-
-    if( signBuff == nullptr ) {
+    if( signature.length() == 0 ) {
+        retSign =  "Waiting for signature.";
         return ERR_WAITING_FOR_SIGN;
-    } 
-
-    if( strlen( signBuff) + 1 < signLen) {
-        return ERR_BUFFER_TOO_SMALL;
-    } else {
-        strcpy( sign, signBuff );
     }
+    retSign = signature;
 
     return err;
 }
@@ -50,19 +49,22 @@ void ECCSignScreen::onSetup()
 
 void ECCSignScreen::onLongPress()
 {
-    if( messageBuff == nullptr ) {
+    if( messageToSign.length() == 0 ) {
         return;
     }
 
-    if( signBuff != nullptr ) {
+    if( signature.length() > 0 ) {
         return;
     }
+    Serial.printf("---onLongPress---\n");
+    Serial.printf("Message buff:%s\n", messageToSign.c_str());
 
     mbedtls_pk_context key;
     loadKeyPair( &key );
     Serial.printf("Keypair loaded:\r\n");
 
-    hashData( messageBuff, strlen( messageBuff), messageHash );
+    unsigned char messageHash[32];
+    hashData( messageToSign.c_str(), messageToSign.length(), messageHash );
     Serial.printf("Hash completed.\r\n");
     dumpHex( messageHash, 32);
 
@@ -73,15 +75,10 @@ void ECCSignScreen::onLongPress()
     Serial.printf("Sign completed.\r\n");
     dumpHex( signBytes, signBytesLen);
 
-    size_t outputLen;
+    signature = base64_encode( signBytes, signBytesLen);
 
-    signBuff = (char*)malloc(outputLen * 2 + 1);
-
-    strcpy( signBuff, "SIGNED");
-
-    //base64_encode( signBytes, signBytesLen, signBuff );
-    Serial.printf("Signature:\r\n%s\r\n", signBuff);
-    //onRepaint();
+    digitalWrite (10, HIGH);
+    onRepaint();
 }
 
 unsigned long lastOn = millis();
@@ -89,9 +86,16 @@ unsigned long lastOff = lastOn + 1;
 
 void ECCSignScreen::onTimerTick()
 {
-    if( messageBuff == nullptr || signBuff != nullptr ) {
-        if( lastOn > lastOff ) {
-            //M5.
+    if( messageToSign.length() > 0 && signature.length() == 0 ) {
+        unsigned long now = millis();
+        if( lastOn > lastOff && lastOn + 200 < now) {
+            digitalWrite (10, HIGH);
+            lastOff = now;
+        } else if( lastOff > lastOn && lastOff + 500 < now ) {
+            digitalWrite (10, LOW);
+            lastOn = now;
+        } else {
+            // Nothing to do
         }
     } else {
 
@@ -107,14 +111,14 @@ void ECCSignScreen::onRepaint()
     
     // TODO check "is ECC key generated?""
 
-    if( messageBuff == nullptr ) {
+    if( messageToSign.length() == 0 ) {
         M5.Lcd.printf("\r\n Nothing\r\n to sign.\r\n");    
-    } else if( signBuff == nullptr ) {
+    } else if( signature.length() == 0 ) {
         M5.Lcd.printf("-- LP:Sign --\r\n");    
-        M5.Lcd.printf("%s", messageBuff );    
+        M5.Lcd.printf("%s", messageToSign.c_str() );    
     } else {
         M5.Lcd.printf("-- Signed: --\r\n");    
-        M5.Lcd.printf("%s", messageBuff );    
+        M5.Lcd.printf("%s", messageToSign.c_str() );    
     }
 }
 

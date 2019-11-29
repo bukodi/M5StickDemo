@@ -7,8 +7,10 @@ Demo project for M5 Stick C
 
 ### Todo:
 * create Dashboard:
+* * Check silicon version
 * long click can double
 * Limit WIFI STA connection time
 * Turn off AP when start STA (and reverse)
 * Support deep sleep and wakeup
+
   

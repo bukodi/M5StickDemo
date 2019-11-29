@@ -83,7 +83,7 @@ void handleSignPOST(AsyncWebServerRequest *request)
     if (request->hasParam("msg", true))
     {
         AsyncWebParameter *p = request->getParam("msg", true);
-        setSignRequest(p->value().c_str());
+        setSignRequest( p->value());
     }
     String body =
         "  <h2>Signature requested.</h2><br>"
@@ -93,11 +93,11 @@ void handleSignPOST(AsyncWebServerRequest *request)
 
 void handleSignResultGET(AsyncWebServerRequest *request)
 {
-    int msgLen = 1024;
-    int signLen = 1024;
-    char *msgBuff = (char *)malloc(msgLen);
-    char *signBuff = (char *)malloc(signLen);
-    getSignature(msgBuff, msgLen, signBuff, signLen);
+    String msgBuff = "";
+    String signBuff = "";
+    getSignature(msgBuff, signBuff);
+    Serial.printf("msgBuff=%s\n", msgBuff.c_str() );
+    Serial.printf("msgsignBuff=%s\n", signBuff.c_str() );
     String body =
         "  <h2>Signature result</h2>"
         "  <p>Message:</p>"
@@ -111,8 +111,6 @@ void handleSignResultGET(AsyncWebServerRequest *request)
             "  <hr>"
             "  <a href=\"/\">Index</a><br>";
     request->send(200, "text/html", head + body + tail);
-    free(msgBuff);
-    free(signBuff);
 }
 
 void handlePubKeyGET(AsyncWebServerRequest *request)

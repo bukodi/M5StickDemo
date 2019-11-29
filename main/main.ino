@@ -18,6 +18,9 @@ void setup()
 
     printf("Setup begins\r\n");
 
+    // Turn off led
+    pinMode (10, OUTPUT);
+    digitalWrite (10, HIGH);	
 
     M5.begin();
     M5.Lcd.fillScreen(BLACK);
