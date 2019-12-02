@@ -26,6 +26,8 @@ public:
         timerPeriod = 0;
     }
 
+    void activate();
+
     virtual void clear();
 
     virtual void onSetup(){};
@@ -44,6 +46,7 @@ private:
     Screen **screenArray;
     int screenArraySize;
     int currentScreenIdx;
+    int nextScreenIdx;
     unsigned long longpressStartred;
     unsigned long longpressDuration;
     bool longpressShouldClear;
@@ -64,6 +67,7 @@ public:
     void processUIActions();
     Screen *currentScreen();
     void checkScreenTimers();
+    void activate(Screen *screen);
 };
 
 extern ScreenMgr Screens;

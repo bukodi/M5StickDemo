@@ -5,9 +5,7 @@
 #include "ecckey.h"
 #include "util.h"
 
-//char *messageBuff; // Contains non-null if a sign requested for a message
-
-//char *signBuff; // Contains nullptr if waiting for signature
+ECCSignScreen eccSignScreen;
 
 String messageToSign = "";
 String messageHash = "";
@@ -20,7 +18,9 @@ void setSignRequest( String message ) {
     messageToSign = message;
     Serial.printf("After set messageBuff=%s\n", messageToSign);
     // Turn LED on
-    digitalWrite (10, LOW);	
+    digitalWrite (10, LOW);
+    eccSignScreen.activate();    
+    eccSignScreen.onRepaint();
 }
 
 int getSignature( String& retMsg, String& retSign ) {

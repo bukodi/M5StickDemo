@@ -22,3 +22,6 @@ class ECCSignScreen : public Screen
 void setSignRequest( String message );
 int getSignature( String& retMsg, String& retSign );
 
+extern ECCSignScreen eccSignScreen;
+
+

@@ -24,7 +24,21 @@ void Screen::onLongPress()
 
 void Screen::onRepaint(){};
 
+void Screen::activate() {
+    Screens.activate( this );
+}
+
+
 ScreenMgr Screens;
+
+void ScreenMgr::activate(Screen *screen) {
+    for (int i = 0; i < screenArraySize; i++)
+    {
+        if( screenArray[i] == screen ) {
+            nextScreenIdx = i;
+        };
+    }
+}
 
 void ScreenMgr::add(Screen *screen)
 {
@@ -69,12 +83,27 @@ void ScreenMgr::processUIActions()
     {
         // Button A released
         longpressStartred = now;
-        currentScreen()->onLeave();
-        currentScreenIdx = currentScreenIdx + 1;
-        if (currentScreenIdx == screenArraySize)
+        nextScreenIdx = currentScreenIdx + 1;
+        if (nextScreenIdx == screenArraySize)
         {
-            currentScreenIdx = 0;
+            nextScreenIdx = 0;
         }
+    }
+    else if (btnAPrevState > 0 && btnAThisState > 0)
+    {
+        // Wait for longpress
+        if ((now - longpressStartred) > longpressDuration)
+        {
+            currentScreen()->onLongPress();
+            longpressStartred = now;
+            longpressShouldClear = true;
+        }
+    }
+
+    // Change screen
+    if( currentScreenIdx != nextScreenIdx ) {
+        currentScreen()->onLeave();
+        currentScreenIdx = nextScreenIdx;
         currentScreen()->onEnter();
 
         currentScreen()->timerLastTick = now;
@@ -97,16 +126,6 @@ void ScreenMgr::processUIActions()
         M5.Lcd.setTextColor(savedTextColor, savedBgColor);
         M5.Lcd.setTextFont(savedTextFont);
         M5.Lcd.setTextSize(savedTextSize);
-    }
-    else if (btnAPrevState > 0 && btnAThisState > 0)
-    {
-        // Wait for longpress
-        if ((now - longpressStartred) > longpressDuration)
-        {
-            currentScreen()->onLongPress();
-            longpressStartred = now;
-            longpressShouldClear = true;
-        }
     }
 
     // Check screen timers

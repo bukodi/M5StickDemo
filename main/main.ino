@@ -25,13 +25,13 @@ void setup()
     M5.begin();
     M5.Lcd.fillScreen(BLACK);
 
-    Screens.add(new ECCSignScreen());
+    Screens.add(new BatteryScreen());
+    Screens.add(new GyroscopeScreen());
+    Screens.add(&eccSignScreen);
     Screens.add(new ECCKeyScreen());
     Screens.add(new WifiSetupScreen());
     Screens.add(new WifiClientScreen());
-    Screens.add(new BatteryScreen());
     //Screens.add(new SettingsScreen());
-    Screens.add(new GyroscopeScreen());
     //Screens.add(new Screen("WiFi Client", 0, &printTime));
     //Screens.add(new BleScreen());
 

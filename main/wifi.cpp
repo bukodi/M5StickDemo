@@ -110,6 +110,7 @@ void WifiClientScreen::onTimerTick()
         M5.Lcd.printf("\r\nConnected\r\n");
         stopUITimer();
         ConfigSetIntValue(ConfigKey_WiFiSTA_autoconnect, 1);
+        onRepaint();
     } else {
         M5.Lcd.print(".");
     }

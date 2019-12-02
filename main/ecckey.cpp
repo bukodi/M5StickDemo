@@ -73,7 +73,7 @@ int loadKeyPair( mbedtls_pk_context *key )
     size_t buffLen = 16000;
     memset( pBuff, 0, 16000);
 
-    if( ConfigGetBlob("deviceKey", pBuff, &buffLen ) ) {
+    if( err = ConfigGetBlob("deviceKey", pBuff, &buffLen ) ) {
         free(pBuff);
         return err;
     }
@@ -87,6 +87,7 @@ int loadKeyPair( mbedtls_pk_context *key )
     }
 
     free(pBuff);
+    return err;
 }
 
 void hashData( const void *message, int dataLen, unsigned char* hashBuff) {
@@ -224,14 +225,18 @@ void ECCKeyScreen::onRepaint()
     int genCount = 0;
     ConfigGetIntValue("ECCGenCount", &genCount, 0);
     M5.Lcd.printf("Gen count:%d\r\n", genCount);
-    
+
+    Serial.printf("ECCKeyScreen::onRepaint - 10\n");
+
     mbedtls_pk_context key;
     if( loadKeyPair( &key ) ) {
+    Serial.printf("ECCKeyScreen::onRepaint - 20\n");
         M5.Lcd.printf("\r\n");
-        M5.Lcd.printf("Key not exists.\r\n", genCount);        
+        M5.Lcd.printf("Key not exists.\r\n");        
         M5.Lcd.printf("\r\nLong press:\r\n");
         M5.Lcd.printf("Generate new key\r\n");
     } else {
+        Serial.printf("ECCKeyScreen::onRepaint - 30\n");
         unsigned char hashBuff[32];
         hashPublicKey( &key, hashBuff);
 
