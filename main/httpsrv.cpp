@@ -23,11 +23,11 @@ const String tail =
 void handleIndexGET(AsyncWebServerRequest *request)
 {
     String body =
-        "  <h2>M5 Sctick Demo</h2><br>"
+        "  <h2>M5 Stick Demo</h2><br>"
         "  <a href=\"/wifi\">WiFi setup</a><br>"
         "  <a href=\"/pubkey\">Public key</a><br>"
         "  <a href=\"/sign\">Request signature</a><br>"
-        "  <a href=\"/signresult\">Sing result</a><br>";
+        "  <a href=\"/signresult\">Sign result</a><br>";
     request->send(200, "text/html", head + body + tail);
 }
 
@@ -118,7 +118,7 @@ void handlePubKeyGET(AsyncWebServerRequest *request)
     char *buff = (char *)malloc(4096);
     getPublicKeyPEM(buff, 4096);
     String body =
-        "  <h2>Public KEY</h2>"
+        "  <h2>Public Key</h2>"
         "  <pre>";
     body += buff;
     body += "  </pre>";
