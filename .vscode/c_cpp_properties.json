@@ -3,11 +3,15 @@
         {
             "name": "Linux",
             "includePath": [
+                "/home/bukodi/Arduino/libraries/ArduinoECCX08/src",
                 "/home/bukodi/.arduino15/packages/esp32/tools/**",
                 "/home/bukodi/.arduino15/packages/esp32/hardware/esp32/1.0.2/**",
                 "/home/bukodi/Arduino/libraries/M5StickC/src/",
                 "/home/bukodi/Arduino/libraries/AsyncTCP/src/",
                 "/home/bukodi/Arduino/libraries/ESPAsyncWebServer/src/",
+                "/home/bukodi/Arduino/libraries/Adafruit_BMP280_Library",
+                "/home/bukodi/Arduino/libraries/OneWire/**",
+                "/home/bukodi/Arduino/libraries/DallasTemperature",
                 "${workspaceFolder}/**"
             ],
             "defines": [
@@ -27,6 +31,9 @@
                 "/home/bukodi/Arduino/libraries/M5StickC/src/",
                 "/home/bukodi/Arduino/libraries/AsyncTCP/src/",
                 "/home/bukodi/Arduino/libraries/ESPAsyncWebServer/src/",
+                "/home/bukodi/Arduino/libraries/Adafruit_BMP280_Library",
+                "/home/bukodi/Arduino/libraries/OneWire",
+                "/home/bukodi/Arduino/libraries/DallasTemperature",
                 "${workspaceFolder}/**"
             ],
             "defines": [

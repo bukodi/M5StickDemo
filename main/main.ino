@@ -6,6 +6,9 @@
 #include "screens.h"
 #include "battery.h"
 #include "gyroscope.h"
+#include "envsensor.h"
+#include "deepsleep.h"
+//#include "secureelem.h"
 #include "ecckey.h"
 #include "eccsign.h"
 //#include "ble.h"
@@ -26,7 +29,10 @@ void setup()
     M5.Lcd.fillScreen(BLACK);
 
     Screens.add(new BatteryScreen());
+    Screens.add(new DeepSleepScreen());
     Screens.add(new GyroscopeScreen());
+    //Screens.add(new SEScreen());
+    Screens.add(new EnvSensorScreen());
     Screens.add(&eccSignScreen);
     Screens.add(new ECCKeyScreen());
     Screens.add(new WifiSetupScreen());

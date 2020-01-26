@@ -24,3 +24,4 @@ Demo project for M5 Stick C
 * Secure Element support
 * Support RSA, and alternative Elliptic Curves
   
+                  "/home/bukodi/Arduino/libraries/Adafruit_BMP280_Library",

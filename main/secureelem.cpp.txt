@@ -1,0 +1,51 @@
+#include <M5StickC.h>
+#include "secureelem.h"
+#include <Wire.h> 
+#include <ArduinoECCX08.h>
+
+
+
+//DallasTemperature sensors(&oneWire);
+
+void SEScreen::onSetup()
+{
+    int sclPin = GPIO_NUM_0;
+    int sdaPin = GPIO_NUM_26;
+    if( ! Wire.begin( sdaPin, sclPin, 0) ) {
+      Serial.println("Could not init I2C!");
+      M5.Lcd.println("Could not init I2C!");
+    }
+
+    Serial.println("Init I2C");
+
+
+
+
+}
+
+void SEScreen::onLongPress()
+{
+ 
+  TwoWire i2c = TwoWire(0);
+  int sclPin = GPIO_NUM_0;
+  int sdaPin = GPIO_NUM_26;
+  if( ! i2c.begin( sdaPin, sclPin, 0) ) {
+    Serial.println("Could not init I2C!");
+    M5.Lcd.println("Could not init I2C!");
+  }
+
+  Serial.println("BP 50");
+  ECCX08Class ecc508 = ECCX08Class(i2c, 0x0C);
+  Serial.println("BP 60");
+  ecc508.begin();
+  Serial.println("BP 70");
+  Serial.println(  ecc508.serialNumber() );
+  Serial.println("BP 80");
+
+}
+
+void SEScreen::onRepaint()
+{
+}
+
+

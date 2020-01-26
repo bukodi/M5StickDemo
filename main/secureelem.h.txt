@@ -1,0 +1,13 @@
+#include "screens.h"
+
+class SEScreen : public Screen
+{
+    public:
+    SEScreen() : Screen("ECC608A") {
+
+    };
+    void onSetup();
+    void onRepaint();
+    void onLongPress();
+};
+
